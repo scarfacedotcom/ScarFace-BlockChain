@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	"encoding/json"
 	"fmt"
+	"log"
 	"strings"
 	"time"
 )
@@ -13,6 +14,14 @@ type Block struct {
 	prevHash     [32]byte
 	timestamp    int64
 	transactions []string
+}
+
+func NewBlock(nonce int, prevHash [32]byte) *Block {
+	b := new(Block)
+	b.timestamp = time.Now().UnixNano()
+	b.nonce = nonce
+	b.prevHash = prevHash
+	return b
 }
 
 func (b *Block) Print() {
@@ -59,25 +68,29 @@ func (bc *Blockchain) CreatedBlock(nonce int, previousHash [32]byte) *Block {
 	bc.chain = append(bc.chain, b)
 	return b
 }
+
 func (bc *Blockchain) LastBlock() *Block {
 	return bc.chain[len(bc.chain)-1]
 }
-func NewBlock(nonce int, prevHash [32]byte) *Block {
-	b := new(Block)
-	b.timestamp = time.Now().UnixNano()
-	b.nonce = nonce
-	b.prevHash = prevHash
-	return b
-}
 
 func (bc *Blockchain) Print() {
+
 	for i, block := range bc.chain {
 		fmt.Printf("%s Chain %d %s\n", strings.Repeat("=", 25), i, strings.Repeat("=", 25))
 		block.Print()
 	}
+
 	fmt.Printf("%s\n", strings.Repeat("*", 25))
 }
 
+type Transaction struct {
+	sendersBlockchainAddress   string
+	recipientBlockchainAddress stringG
+}
+
+func init() {
+	log.SetPrefix("Blockchain: ")
+}
 func main() {
 
 	blockchain := NewBlockchain()
