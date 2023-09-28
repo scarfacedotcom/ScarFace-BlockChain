@@ -9,7 +9,11 @@ import (
 	"time"
 )
 
-const MINNNG_DIFFICULTY = 3
+const (
+	MINNNG_DIFFICULTY = 3
+	MINNNG_SENDER     = "THE BLOCKCHAIN"
+	MINNNG_REWARD     = 1.0
+)
 
 type Block struct {
 	timestamp    int64
@@ -57,18 +61,20 @@ func (b *Block) MarshalJSON() ([]byte, error) {
 }
 
 type Blockchain struct {
-	transactionPool []*Transaction
-	chain           []*Block
+	transactionPool   []*Transaction
+	chain             []*Block
+	blockchainAddress string
 }
 
-func NewBlockchain() *Blockchain {
+func NewBlockchain(blockchainAddress string) *Blockchain {
 	b := &Block{}
 	bc := new(Blockchain)
-	bc.CreatedBlock(0, b.Hash())
+	bc.blockchainAddress = blockchainAddress
+	bc.CreateBlock(0, b.Hash())
 	return bc
 }
 
-func (bc *Blockchain) CreatedBlock(nonce int, previousHash [32]byte) *Block {
+func (bc *Blockchain) CreateBlock(nonce int, previousHash [32]byte) *Block {
 	b := NewBlock(nonce, previousHash, bc.transactionPool)
 	bc.chain = append(bc.chain, b)
 	bc.transactionPool = []*Transaction{}
@@ -122,6 +128,15 @@ func (bc *Blockchain) ProofOfWork() int {
 	return nonce
 }
 
+func (bc *Blockchain) Mining() bool {
+	bc.AddTransaction(MINNNG_SENDER, bc.blockchainAddress, MINNNG_REWARD)
+	nonce := bc.ProofOfWork()
+	previousHash := bc.LastBlock().Hash()
+	bc.CreateBlock(nonce, previousHash)
+	log.Println("action=mining,status=success")
+	return true
+}
+
 type Transaction struct {
 	senderBlockchainAddress    string
 	recipientBlockchainAddress string
@@ -156,22 +171,18 @@ func init() {
 }
 
 func main() {
+	myBlockchainAddress := "my_blockchain_address"
 
-	blockchain := NewBlockchain()
+	blockchain := NewBlockchain(myBlockchainAddress)
 	blockchain.Print()
 
 	blockchain.AddTransaction("Peter", "Jay", 1.0)
-	previousHash := blockchain.LastBlock().Hash()
-	nonce := blockchain.ProofOfWork()
-	blockchain.CreatedBlock(nonce, previousHash)
+	blockchain.Mining()
 	blockchain.Print()
 
 	blockchain.AddTransaction("ScarFace", "Mark", 2.0)
 	blockchain.AddTransaction("Alice", "Bob", 3.0)
-	previousHash = blockchain.LastBlock().Hash()
-	nonce = blockchain.ProofOfWork()
-
-	blockchain.CreatedBlock(nonce, previousHash)
+	blockchain.Mining()
 	blockchain.Print()
 
 }
