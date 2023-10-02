@@ -23,7 +23,6 @@ func NewWallet() *Wallet {
 	privateKey, _ := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
 	w.privateKey = privateKey
 	w.publicKey = &w.privateKey.PublicKey
-	return w
 
 	//2. Perform SHA256 hashing on the public key
 	h2 := sha256.New()

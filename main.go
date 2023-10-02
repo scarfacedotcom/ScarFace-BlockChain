@@ -31,7 +31,7 @@ func main() {
 	// fmt.Printf("Mark %.1f\n", blockchain.CalculateTotalAmount("Mark"))
 
 	w := wallet.NewWallet()
-	fmt.Println(w.PrivateKeyStr())
-	fmt.Println(w.PublicKeyStr())
-	fmt.Println(w.BlockchainAddress())
+	fmt.Println("Private Key", w.PrivateKeyStr())
+	fmt.Println("Public Key", w.PublicKeyStr())
+	fmt.Println("Wallet Address", w.BlockchainAddress())
 }
