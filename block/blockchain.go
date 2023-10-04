@@ -98,9 +98,21 @@ func (bc *Blockchain) Print() {
 	fmt.Printf("%s\n", strings.Repeat("*", 50))
 }
 
-func (bc *Blockchain) AddTransaction(sender string, recipient string, value float32) {
+func (bc *Blockchain) AddTransaction(sender string, recipient string, value float32, senderPublicKey *ecdsa.PublicKey, s *utils.Signature) bool {
 	t := NewTransaction(sender, recipient, value)
-	bc.transactionPool = append(bc.transactionPool, t)
+
+	if sender == MINNNG_SENDER {
+		bc.transactionPool = append(bc.transactionPool, t)
+		return true
+	}
+
+	if bc.VerifyTransactionSignature(senderPublicKey, s, t) {
+		bc.transactionPool = append(bc.transactionPool, t)
+		return true
+	} else {
+		log.Println("ERROR: Verify Transaction")
+	}
+	return false
 }
 
 func (bc *Blockchain) VerifyTransactionSignature(senderPublicKey *ecdsa.PublicKey, s *utils.Signature, t *Transaction) bool {
@@ -138,7 +150,7 @@ func (bc *Blockchain) ProofOfWork() int {
 }
 
 func (bc *Blockchain) Mining() bool {
-	bc.AddTransaction(MINNNG_SENDER, bc.blockchainAddress, MINNNG_REWARD)
+	bc.AddTransaction(MINNNG_SENDER, bc.blockchainAddress, MINNNG_REWARD, nil, nil)
 	nonce := bc.ProofOfWork()
 	previousHash := bc.LastBlock().Hash()
 	bc.CreateBlock(nonce, previousHash)
