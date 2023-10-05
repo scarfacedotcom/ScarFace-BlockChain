@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/scarface-blockchain/block"
 	"github.com/scarface-blockchain/wallet"
 )
 
@@ -12,29 +13,24 @@ func init() {
 }
 
 func main() {
-	// myBlockchainAddress := "my_blockchain_address"
 
-	// blockchain := NewBlockchain(myBlockchainAddress)
-	// blockchain.Print()
+	walletM := wallet.NewWallet()
+	walletA := wallet.NewWallet()
+	walletB := wallet.NewWallet()
 
-	// blockchain.AddTransaction("Peter", "Jay", 1.0)
-	// blockchain.Mining()
-	// blockchain.Print()
+	//wallet
+	t := wallet.NewTransaction(walletA.PrivateKey(), walletA.PublicKey(), walletA.BlockchainAddress(), walletB.BlockchainAddress(), 1.0)
 
-	// blockchain.AddTransaction("ScarFace", "Mark", 2.0)
-	// blockchain.AddTransaction("Alice", "Bob", 3.0)
-	// blockchain.Mining()
-	// blockchain.Print()
+	//blockchain
+	blockchain := block.NewBlockchain(walletM.BlockchainAddress())
+	isAdded := blockchain.AddTransaction(walletA.BlockchainAddress(), walletB.BlockchainAddress(), 1.0, walletA.PublicKey(), t.GenerateSignature())
+	fmt.Println("Added?", isAdded)
 
-	// fmt.Printf("my_blockchain_address %.1f\n", blockchain.CalculateTotalAmount("my_blockchain_address"))
-	// fmt.Printf("ScarFace %.1f\n", blockchain.CalculateTotalAmount("ScarFace"))
-	// fmt.Printf("Mark %.1f\n", blockchain.CalculateTotalAmount("Mark"))
+	blockchain.Mining()
+	blockchain.Print()
 
-	w := wallet.NewWallet()
-	fmt.Println("Private Key", w.PrivateKeyStr())
-	fmt.Println("Public Key", w.PublicKeyStr())
-	fmt.Println("Wallet Address", w.BlockchainAddress())
+	fmt.Printf("A %.1f\n", blockchain.CalculateTotalAmount(walletA.BlockchainAddress()))
+	fmt.Printf("B %.1f\n", blockchain.CalculateTotalAmount(walletB.BlockchainAddress()))
+	fmt.Printf("M %.1f\n", blockchain.CalculateTotalAmount(walletM.BlockchainAddress()))
 
-	t := wallet.NewTransaction(w.PrivateKey(), w.PublicKey(), w.BlockchainAddress(), "B", 1.0)
-	fmt.Printf("signature %s\n", t.GenerateSignature())
 }
