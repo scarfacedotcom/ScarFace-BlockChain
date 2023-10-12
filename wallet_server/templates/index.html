@@ -19,6 +19,14 @@
                     console.error(error);
                 }
             })
+            $('#send_money_button').click(function(){
+                let confirm_text = "Gee, Are you sure about this move?";
+                let confirm_result = confirm(confirm_text)
+                if (confirm_result !== true) {
+                    alert ('Cancelled')
+                    return
+                }
+            })
         })
     </script>
 </head>
