@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"text/template"
 
+	"github.com/scarface-blockchain/utils"
 	"github.com/scarface-blockchain/wallet"
 )
 
@@ -74,8 +75,19 @@ func (ws *WalletServer) Wallet(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (ws *WalletServer) CreateTransaction(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodPost:
+		io.WriteString(w, string(utils.JsonStatus("success")))
+	default:
+		w.WriteHeader(http.StatusBadRequest)
+		log.Println("ERROR: Invalid HTTP Method")
+	}
+}
+
 func (ws *WalletServer) Run() {
 	http.HandleFunc("/", ws.Index)
 	http.HandleFunc("/wallet", ws.Wallet)
+	http.HandleFunc("/transaction", ws.CreateTransaction)
 	log.Fatal(http.ListenAndServe("0.0.0.0:"+strconv.Itoa(int(ws.Port())), nil))
 }
