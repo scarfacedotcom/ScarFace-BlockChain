@@ -43,27 +43,6 @@ func (ws *WalletServer) Index(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
-// func (ws *WalletServer) Index(w http.ResponseWriter, req *http.Request) {
-// 	switch req.Method {
-// 	case http.MethodGet:
-// 		tmplPath := "/home/ubuntu/Desktop/GO/scarface-blockchain/wallet_server/templates/index.html"
-// 		t, err := template.ParseFiles(tmplPath)
-
-//			if err != nil {
-//				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-//				log.Printf("ERROR: Failed to parse template: %v", err)
-//				return
-//			}
-//			err = t.Execute(w, nil)
-//			if err != nil {
-//				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-//				log.Printf("ERROR: Failed to execute template: %v", err)
-//			}
-//		default:
-//			log.Printf("ERROR: Invalid HTTP Method")
-//		}
-//	}
-
 func (ws *WalletServer) Wallet(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodPost:
@@ -96,9 +75,9 @@ func (ws *WalletServer) CreateTransaction(w http.ResponseWriter, r *http.Request
 		}
 
 		fmt.Println(*t.SenderPublicKey)
-		fmt.Println(*t.SenderBlockchainAddresss)
+		fmt.Println(*t.SenderBlockchainAddress)
 		fmt.Println(*t.SenderPrivateKey)
-		fmt.Println(*t.RecipientBlockchainAddresss)
+		fmt.Println(*t.RecipientBlockchainAddress)
 		fmt.Println(*t.Value)
 
 	default:
