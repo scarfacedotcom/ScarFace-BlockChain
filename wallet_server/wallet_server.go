@@ -59,26 +59,28 @@ func (ws *WalletServer) Wallet(w http.ResponseWriter, r *http.Request) {
 func (ws *WalletServer) CreateTransaction(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodPost:
+
 		decoder := json.NewDecoder(r.Body)
 		var t wallet.TransactionRequest
 		err := decoder.Decode(&t)
 		if err != nil {
-			log.Printf("ERROR: %v", err)
-			io.WriteString(w, string(utils.JsonStatus("fail")))
+			log.Printf("ERROR decoding JSON request: %v", err)
+			//io.WriteString(w, string(utils.JsonStatus("fail")))
+			io.WriteString(w, string(utils.JsonResponse("fail", "Some error message")))
+
 			return
 		}
 
 		if !t.Validate() {
 			log.Println("ERROR: missing field(s)")
-			io.WriteString(w, string(utils.JsonStatus("fail")))
+			//io.WriteString(w, string(utils.JsonStatus("fail")))
+			io.WriteString(w, string(utils.JsonResponse("fail", "Some error message")))
+
 			return
 		}
 
-		fmt.Println(*t.SenderPublicKey)
-		fmt.Println(*t.SenderBlockchainAddress)
-		fmt.Println(*t.SenderPrivateKey)
-		fmt.Println(*t.RecipientBlockchainAddress)
-		fmt.Println(*t.Value)
+		fmt.Println(len(*t.SenderPrivateKey))
+		fmt.Println(len(*t.SenderPublicKey))
 
 	default:
 		w.WriteHeader(http.StatusBadRequest)
