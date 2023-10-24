@@ -50,6 +50,7 @@ func (ws *WalletServer) Wallet(w http.ResponseWriter, r *http.Request) {
 		myWallet := wallet.NewWallet()
 		m, _ := myWallet.MarshalJSON()
 		io.WriteString(w, string(m[:]))
+
 	default:
 		w.WriteHeader(http.StatusBadRequest)
 		log.Println("ERROR: Invalid HTTP Method")
@@ -65,21 +66,18 @@ func (ws *WalletServer) CreateTransaction(w http.ResponseWriter, r *http.Request
 		err := decoder.Decode(&t)
 		if err != nil {
 			log.Printf("ERROR decoding JSON request: %v", err)
-			//io.WriteString(w, string(utils.JsonStatus("fail")))
-			io.WriteString(w, string(utils.JsonResponse("fail", "Some error message")))
-
+			io.WriteString(w, string(utils.JsonStatus("fail")))
 			return
 		}
 
 		if !t.Validate() {
 			log.Println("ERROR: missing field(s)")
-			//io.WriteString(w, string(utils.JsonStatus("fail")))
-			io.WriteString(w, string(utils.JsonResponse("fail", "Some error message")))
+			io.WriteString(w, string(utils.JsonStatus("fail")))
 
 			return
 		}
 
-		fmt.Println(len(*t.SenderPrivateKey))
+		fmt.Println(*t.SenderPrivateKey)
 		fmt.Println(len(*t.SenderPublicKey))
 
 	default:
